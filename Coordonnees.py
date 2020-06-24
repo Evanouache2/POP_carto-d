@@ -3,7 +3,8 @@ import smtplib
 import urllib
 import geopy
 import json
-import matplotlib as plt
+import numpy 
+import matplotlib.pyplot as plt
 import smopy 
 
 
@@ -57,6 +58,17 @@ def get_weather():
         
         a += 1
         
+        
+        
+def get_info_area () :
+    var = (input("\nNuméro de zone : "))
+    print ""
+    print "Coordonnees : ", geocode[var]
+    print ""
+    print'Météo à ces coordonnées : \n\n', weathercode[var]
+    
+    
+        
 def get_area(lat_min, lat_max, lon_min, lon_max) :
     
     lat_min = lat_max = float (geocode[0]['lat'])
@@ -71,28 +83,35 @@ def get_area(lat_min, lat_max, lon_min, lon_max) :
         lon_max = max(lon_max, float(geocode[a]['lon']))
         
         a += 1
-
+        
     marge_lon = ((lon_max - lon_min)/100)*10
     marge_lat = ((lat_max - lat_min)/100)*10
+    
+    lat_min -= marge_lat
+    lat_max += marge_lat
+    lon_min -= marge_lon
+    lon_max += marge_lon
         
     return (lat_min, lat_max, lon_min, lon_max)
   
   
-    
-def Afficher_info_area () :
-    var = (input("\nNuméro de zone : "))
-    print ""
-    print "Coordonnees : ", geocode[var]
-    print ""
-    print'Météo à ces coordonnées : \n\n', weathercode[var]
   
   
   
     
 def get_map (lat_min, lat_max, lon_min, lon_max) :
-    map = smopy.Map(lat_min, lon_min,lat_max,lon_max, z=8)
     
-    ax = map.show_mpl(figsize=(8,8))
+    map = smopy.Map(lat_min, lon_min,lat_max,lon_max, z=3)
+    
+    a = 0
+    ax = map.show_mpl(figsize=(8,6))
+    
+    for loc in geocode :
+        x,y = map.to_pixels(float(geocode[a]['lat']), float(geocode[a]['lon']))
+        ax.plot(x,y, 'or', ms=5, mew=1)
+        
+        a += 1
+        
     plt.show()
     return True
 
@@ -103,26 +122,14 @@ def get_map (lat_min, lat_max, lon_min, lon_max) :
 geocode=[]
 weathercode=[]
 
-lat_min = 0
+lat_min = 0 
 lat_max = 0
-lon_min = 0
+lon_min = 0 
 lon_max = 0
 
 get_location()
 get_weather()
+
 get_area(lat_min, lat_max, lon_min, lon_max)
+get_map (lat_min, lat_max, lon_min, lon_max)
 
-
-print "Afficher info Zone --> 1"
-print "Afficher map --> 2"
-var = (input("Choisissez :"))
-
-if var == 1:
-    Afficher_info_area()
-    
-if var == 2:
-    get_map(lat_min, lat_max, lon_min, lon_max)
-
-if var != 1:
-    if var != 2:
-        print "\nInvalide choice"
