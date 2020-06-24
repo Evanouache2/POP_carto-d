@@ -3,12 +3,15 @@ import smtplib
 import urllib
 import geopy
 import json
+import matplotlib as plt
+import smopy 
+
+
 import Config
 
 
 
-geocode=[]
-weathercode=[]
+
 
 def get_location():
     lonlat=open('/home/popschool/projects/Coordonnée/lonlatonly.txt', 'r')
@@ -54,13 +57,72 @@ def get_weather():
         
         a += 1
         
+def get_area(lat_min, lat_max, lon_min, lon_max) :
+    
+    lat_min = lat_max = float (geocode[0]['lat'])
+    lon_min = lon_max = float (geocode[0]['lon'])
+    
+    a = 0
+    
+    for loc in geocode : 
+        lat_min = min(lat_min, float(geocode[a]['lat']))
+        lat_max = max(lat_max, float(geocode[a]['lat']))
+        lon_min = min(lon_min, float(geocode[a]['lon']))
+        lon_max = max(lon_max, float(geocode[a]['lon']))
         
+        a += 1
+
+    marge_lon = ((lon_max - lon_min)/100)*10
+    marge_lat = ((lat_max - lat_min)/100)*10
+        
+    return (lat_min, lat_max, lon_min, lon_max)
+  
+  
+    
+def Afficher_info_area () :
+    var = (input("\nNuméro de zone : "))
+    print ""
+    print "Coordonnees : ", geocode[var]
+    print ""
+    print'Météo à ces coordonnées : \n\n', weathercode[var]
+  
+  
+  
+    
+def get_map (lat_min, lat_max, lon_min, lon_max) :
+    map = smopy.Map(lat_min, lon_min,lat_max,lon_max, z=8)
+    
+    ax = map.show_mpl(figsize=(8,8))
+    plt.show()
+    return True
+
+    
+    
+    
+    
+geocode=[]
+weathercode=[]
+
+lat_min = 0
+lat_max = 0
+lon_min = 0
+lon_max = 0
 
 get_location()
 get_weather()
+get_area(lat_min, lat_max, lon_min, lon_max)
 
-var = (input("\nNuméro de zone : "))
-print ""
-print "Coordonnees : ", geocode[var]
-print ""
-print'Météo à ces coordonnées : \n\n', weathercode[var]
+
+print "Afficher info Zone --> 1"
+print "Afficher map --> 2"
+var = (input("Choisissez :"))
+
+if var == 1:
+    Afficher_info_area()
+    
+if var == 2:
+    get_map(lat_min, lat_max, lon_min, lon_max)
+
+if var != 1:
+    if var != 2:
+        print "\nInvalide choice"
