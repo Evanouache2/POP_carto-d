@@ -3,6 +3,9 @@ import smtplib
 import urllib
 import geopy
 import json
+import Config
+
+
 
 geocode=[]
 weathercode=[]
@@ -18,9 +21,9 @@ def get_location():
     
     return geocode
     
-    
+      
 def get_weather():
-    api='65cac0f456f55747c7f58e9ba1e824d0'
+    api = Config.apikey
     
     a = 0
         
