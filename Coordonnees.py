@@ -14,7 +14,7 @@ import Config
 
 
 
-def get_location():
+def get_location(geocode):
     lonlat=open('/home/popschool/projects/Coordonnée/lonlatonly.txt', 'r')
     
 
@@ -26,7 +26,7 @@ def get_location():
     return geocode
     
       
-def get_weather():
+def get_weather(geocode, weathercode):
     api = Config.apikey
     
     a = 0
@@ -60,7 +60,7 @@ def get_weather():
         
         
         
-def get_info_area () :
+def get_info_area (geocode) :
     var = (input("\nNuméro de zone : "))
     print ""
     print "Coordonnees : ", geocode[var]
@@ -69,7 +69,7 @@ def get_info_area () :
     
     
         
-def get_area(lat_min, lat_max, lon_min, lon_max) :
+def get_area(geocode, coord) :
     
     lat_min = lat_max = float (geocode[0]['lat'])
     lon_min = lon_max = float (geocode[0]['lon'])
@@ -91,45 +91,47 @@ def get_area(lat_min, lat_max, lon_min, lon_max) :
     lat_max += marge_lat
     lon_min -= marge_lon
     lon_max += marge_lon
-        
-    return (lat_min, lat_max, lon_min, lon_max)
-  
-  
-  
+    
+    MinMax= {'lat_min':lat_min,'lat_max':lat_max, 'lon_min':lon_min,'lon_max':lon_max}
+    
+    coord.append (MinMax)
+    return (coord)
   
   
     
-def get_map (lat_min, lat_max, lon_min, lon_max) :
+def get_map (coord, geocode) :
     
-    map = smopy.Map(lat_min, lon_min,lat_max,lon_max, z=3)
+    map = smopy.Map(coord[0]['lon_min'], coord[0]['lat_min'], coord[0]['lon_max'], coord[0]['lat_max'], z=15)
+    
+    print coord
     
     a = 0
     ax = map.show_mpl(figsize=(8,6))
     
     for loc in geocode :
-        x,y = map.to_pixels(float(geocode[a]['lat']), float(geocode[a]['lon']))
-        ax.plot(x,y, 'or', ms=5, mew=1)
+        x,y = map.to_pixels(float(geocode[a]['lon']), float(geocode[a]['lat']))
+        ax.plot(x,y, 'or', ms=10, mew=1)
         
         a += 1
         
     plt.show()
+
     return True
 
     
     
+def main():
     
+    geocode=[]
+    weathercode=[]
     
-geocode=[]
-weathercode=[]
+    coord = []
+    
+    get_location(geocode)
+    get_weather(geocode, weathercode)
+    
+    get_area(geocode, coord)
+    get_map(coord, geocode)
 
-lat_min = 0 
-lat_max = 0
-lon_min = 0 
-lon_max = 0
 
-get_location()
-get_weather()
-
-get_area(lat_min, lat_max, lon_min, lon_max)
-get_map (lat_min, lat_max, lon_min, lon_max)
-
+main()
