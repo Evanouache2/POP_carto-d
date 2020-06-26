@@ -60,7 +60,7 @@ def get_weather(geocode, weathercode):
         
         
         
-def get_info_area (geocode) :
+def get_info_area (geocode, weathercode) :
     var = (input("\nNuméro de zone : "))
     print ""
     print "Coordonnees : ", geocode[var]
@@ -130,8 +130,19 @@ def main():
     get_location(geocode)
     get_weather(geocode, weathercode)
     
-    get_area(geocode, coord)
-    get_map(coord, geocode)
+    print '\nAffichage des données météos --> 1'
+    print 'Affichage de la map --> 2'
+    var = (input("\nEntrez votre choix : "))
+    
+    if (var == 1):
+        get_info_area(geocode, weathercode)
+        
+    if (var == 2):
+        get_area(geocode, coord)
+        get_map(coord, geocode)
 
+    if (var != 1):
+        if (var !=2):
+            print 'Choix invalide'
 
 main()
